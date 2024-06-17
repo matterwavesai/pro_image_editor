@@ -62,7 +62,9 @@ class PaintingController extends ChangeNotifier {
   double get scaledStrokeWidth => _strokeWidth * _strokeMultiplier;
 
   /// Indicates whether there is an ongoing painting action.
-  bool get busy => _paintInProgress;
+  bool get busy {
+    return _paintInProgress;
+  }
 
   /// Indicates whether the current mode requires filling (e.g., circle or rectangle).
   bool get fill => _fill;

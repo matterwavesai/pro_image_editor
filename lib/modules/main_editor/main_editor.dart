@@ -2279,7 +2279,7 @@ class ProImageEditorState extends State<ProImageEditor>
                               mainEditorCallbacks?.handleUpdateUI();
                               _selectedLayerIndex = -1;
                             },
-                            onTapDown: () {
+                            onTapDown: (_) {
                               _selectedLayerIndex = i;
                               _setTempLayer(layerItem);
                             },

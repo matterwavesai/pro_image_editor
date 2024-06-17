@@ -20,6 +20,11 @@ class PaintedModel {
   /// For [FreeStyle], it contains a list of points.
   List<Offset?> offsets;
 
+  /// Optional text to be drawn.
+  /// Only applicable to [PaintModeE.cropRect] mode.
+  /// Will draw the text at the center of the crop rectangle.
+  String? text;
+
   /// A boolean indicating whether the drawn shape should be filled.
   bool fill;
 
@@ -56,6 +61,7 @@ class PaintedModel {
     required this.strokeWidth,
     this.fill = false,
     this.hit = false,
+    this.text,
   });
 
   factory PaintedModel.fromMap(Map map) {
@@ -72,6 +78,7 @@ class PaintedModel {
       color: Color(map['color']),
       strokeWidth: map['strokeWidth'] ?? 1,
       fill: map['fill'] ?? false,
+      text: map['text'],
     );
   }
 
@@ -102,6 +109,7 @@ class PaintedModel {
       'color': color.value,
       'strokeWidth': strokeWidth,
       'fill': fill,
+      'text': text,
     };
   }
 }

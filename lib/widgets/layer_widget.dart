@@ -34,7 +34,7 @@ class LayerWidget extends StatefulWidget with SimpleConfigsAccess {
   final Layer layerData;
 
   /// Callback when a tap down event occurs.
-  final Function()? onTapDown;
+  final Function(PointerDownEvent event)? onTapDown;
 
   /// Callback when a tap up event occurs.
   final Function()? onTapUp;
@@ -165,7 +165,7 @@ class _LayerWidgetState extends State<LayerWidget>
   void _onPointerDown(PointerDownEvent event) {
     if (_checkHitIsOutsideInCanvas()) return;
     if (!isDesktop || event.buttons != kSecondaryMouseButton) {
-      widget.onTapDown?.call();
+      widget.onTapDown?.call(event);
     }
   }
 
@@ -383,7 +383,7 @@ class _LayerWidgetState extends State<LayerWidget>
       child: RepaintBoundary(
         child: CustomPaint(
           size: layer.size,
-          willChange: false,
+          willChange: true,
           isComplex: layer.item.mode == PaintModeE.freeStyle,
           painter: DrawPainting(
             item: layer.item,

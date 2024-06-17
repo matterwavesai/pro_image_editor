@@ -17,7 +17,7 @@ class RoundCropperExample extends StatefulWidget {
 
 class _RoundCropperExampleState extends State<RoundCropperExample>
     with ExampleHelperState<RoundCropperExample> {
-  final _cropRotateEditorKey = GlobalKey<CropRotateEditorState>();
+  final _cropRotateEditorKey = GlobalKey<CropPaintEditorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class _RoundCropperExampleState extends State<RoundCropperExample>
   }
 
   Widget _buildEditor() {
-    return CropRotateEditor.asset(
+    return CropPaintEditor.asset(
       ExampleConstants.of(context)!.demoAssetPath,
       key: _cropRotateEditorKey,
       initConfigs: CropRotateEditorInitConfigs(

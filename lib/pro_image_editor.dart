@@ -12,6 +12,8 @@ export 'package:emoji_picker_flutter/emoji_picker_flutter.dart'
 export 'modules/main_editor/main_editor.dart';
 export 'modules/paint_editor/paint_editor.dart';
 export 'modules/crop_rotate_editor/crop_rotate_editor.dart';
+export 'modules/crop_paint_editor/crop_paint_editor.dart';
+export 'modules/zoomable_main_editor/zoomable_main_editor.dart';
 export 'modules/filter_editor/filter_editor.dart';
 export 'modules/blur_editor/blur_editor.dart';
 

@@ -17,4 +17,19 @@ enum PaintModeE {
 
   /// Draws a dashed line between two points.
   dashLine,
+
+  /// a rectangular shaped cropping box
+  cropRect,
+}
+
+enum CropRectResizeMode {
+  none,
+  topLeft,
+  topRight,
+  bottomLeft,
+  bottomRight,
+  top,
+  bottom,
+  left,
+  right,
 }

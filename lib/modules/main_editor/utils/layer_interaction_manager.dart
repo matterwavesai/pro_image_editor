@@ -5,6 +5,8 @@ import 'dart:math';
 // Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pro_image_editor/modules/paint_editor/utils/paint_editor_enum.dart';
+import 'package:pro_image_editor/pro_image_editor.dart';
 
 // Package imports:
 import 'package:vibration/vibration.dart';
@@ -113,6 +115,8 @@ class LayerInteractionManager {
   /// Last recorded Y-axis position for layers.
   LayerLastPosition lastPositionY = LayerLastPosition.center;
 
+  CropRectResizeMode _resizeMode = CropRectResizeMode.none;
+
   /// Determines if layers are selectable based on the configuration and device type.
   bool layersAreSelectable(ProImageEditorConfigs configs) {
     if (configs.layerInteraction.selectable ==
@@ -166,6 +170,191 @@ class LayerInteractionManager {
       editorSize: editorSize,
       configEnabledHitVibration: configEnabledHitVibration,
     );
+  }
+
+  determineResizeMode({
+    required PointerDownEvent detail,
+    required Layer activeLayer,
+    required Offset realHitPoint,
+  }) {
+    if (activeLayer is PaintingLayerData) {
+      final isCropRect = activeLayer.item.mode == PaintModeE.cropRect;
+      if (isCropRect) {
+        // Rect layerRectInLocal = Rect.fromCenter(
+        //   center: Offset(
+        //     activeLayer.offset.dx,
+        //     activeLayer.offset.dy,
+        //   ),
+        //   width:
+        //       activeLayer.item.offsets[1]!.dx - activeLayer.item.offsets[0]!.dx,
+        //   height:
+        //       activeLayer.item.offsets[1]!.dy - activeLayer.item.offsets[0]!.dy,
+        // );
+        // debugPrint(
+        //     'current crop rect position ${layerRectInLocal.topLeft}, ${layerRectInLocal.bottomRight}');
+        // debugPrint('hit point $realHitPoint');
+
+        Rect layerRectInLocal = Rect.fromPoints(
+          activeLayer.item.offsets[0]!,
+          activeLayer.item.offsets[1]!,
+        );
+
+        const draggableThreshold = 24.0;
+
+        // if the details.localFocalPoint is within the layerRectInLocal, considering the `draggableThreshold`
+        // we will resize instead of moving the layer
+        final nearTop =
+            realHitPoint.dy >= layerRectInLocal.top - draggableThreshold &&
+                realHitPoint.dy <= layerRectInLocal.top + draggableThreshold;
+        final nearBottom =
+            realHitPoint.dy >= layerRectInLocal.bottom - draggableThreshold &&
+                realHitPoint.dy <= layerRectInLocal.bottom + draggableThreshold;
+        final nearLeft =
+            realHitPoint.dx >= layerRectInLocal.left - draggableThreshold &&
+                realHitPoint.dx <= layerRectInLocal.left + draggableThreshold;
+        final nearRight =
+            realHitPoint.dx >= layerRectInLocal.right - draggableThreshold &&
+                realHitPoint.dx <= layerRectInLocal.right + draggableThreshold;
+        // debugPrint(
+        //   'nearTop: $nearTop, nearBottom: $nearBottom, nearLeft: $nearLeft, nearRight: $nearRight',
+        // );
+        if (nearTop || nearBottom || nearLeft || nearRight) {
+          if (nearTop && nearLeft) {
+            _resizeMode = CropRectResizeMode.topLeft;
+          } else if (nearTop && nearRight) {
+            _resizeMode = CropRectResizeMode.topRight;
+          } else if (nearBottom && nearLeft) {
+            _resizeMode = CropRectResizeMode.bottomLeft;
+          } else if (nearBottom && nearRight) {
+            _resizeMode = CropRectResizeMode.bottomRight;
+          } else if (nearTop) {
+            _resizeMode = CropRectResizeMode.top;
+          } else if (nearBottom) {
+            _resizeMode = CropRectResizeMode.bottom;
+          } else if (nearLeft) {
+            _resizeMode = CropRectResizeMode.left;
+          } else if (nearRight) {
+            _resizeMode = CropRectResizeMode.right;
+          } else {
+            _resizeMode = CropRectResizeMode.none;
+          }
+        } else {
+          _resizeMode = CropRectResizeMode.none;
+        }
+      }
+
+      debugPrint('resize mode $_resizeMode');
+    }
+  }
+
+  resetResizeMode() {
+    _resizeMode = CropRectResizeMode.none;
+  }
+
+  /// Calculates movement of a layer based on user interactions, considering various conditions such as hit areas and screen boundaries.
+  Layer calculateMovementAndResize({
+    required BuildContext context,
+    required ScaleUpdateDetails detail,
+    required Layer activeLayer,
+    required Offset realHitPoint,
+  }) {
+    if (_activeScale) return activeLayer;
+
+    if (activeLayer is PaintingLayerData) {
+      final isCropRect = activeLayer.item.mode == PaintModeE.cropRect;
+      if (isCropRect && _resizeMode != CropRectResizeMode.none) {
+        final rectBeforeResize = Rect.fromCenter(
+          center: Offset(
+            activeLayer.offset.dx,
+            activeLayer.offset.dy,
+          ),
+          width:
+              activeLayer.item.offsets[1]!.dx - activeLayer.item.offsets[0]!.dx,
+          height:
+              activeLayer.item.offsets[1]!.dy - activeLayer.item.offsets[0]!.dy,
+        );
+
+        final topLeft = rectBeforeResize.topLeft;
+        final bottomRight = rectBeforeResize.bottomRight;
+
+        final bool resizingLeft = _resizeMode == CropRectResizeMode.left ||
+            _resizeMode == CropRectResizeMode.topLeft ||
+            _resizeMode == CropRectResizeMode.bottomLeft;
+        final bool resizingTop = _resizeMode == CropRectResizeMode.top ||
+            _resizeMode == CropRectResizeMode.topLeft ||
+            _resizeMode == CropRectResizeMode.topRight;
+        final bool resizingRight = _resizeMode == CropRectResizeMode.right ||
+            _resizeMode == CropRectResizeMode.topRight ||
+            _resizeMode == CropRectResizeMode.bottomRight;
+        final bool resizingBottom = _resizeMode == CropRectResizeMode.bottom ||
+            _resizeMode == CropRectResizeMode.bottomLeft ||
+            _resizeMode == CropRectResizeMode.bottomRight;
+
+        final newTopLeft = Offset(
+          topLeft.dx + (resizingLeft ? detail.focalPointDelta.dx : 0),
+          topLeft.dy + (resizingTop ? detail.focalPointDelta.dy : 0),
+        );
+
+        final newBottomRight = Offset(
+          bottomRight.dx + (resizingRight ? detail.focalPointDelta.dx : 0),
+          bottomRight.dy + (resizingBottom ? detail.focalPointDelta.dy : 0),
+        );
+
+        // Ensure the new width and height are at least 50
+        final newWidth =
+            (newBottomRight.dx - newTopLeft.dx).clamp(50, double.infinity);
+        final newHeight =
+            (newBottomRight.dy - newTopLeft.dy).clamp(50, double.infinity);
+
+        final adjustedTopLeft = Offset(
+          resizingLeft ? newBottomRight.dx - newWidth : newTopLeft.dx,
+          resizingTop ? newBottomRight.dy - newHeight : newTopLeft.dy,
+        );
+
+        final adjustedBottomRight = Offset(
+          resizingRight ? newTopLeft.dx + newWidth : newBottomRight.dx,
+          resizingBottom ? newTopLeft.dy + newHeight : newBottomRight.dy,
+        );
+
+        // new offset should be at the center of the resized rect
+        activeLayer.offset = Offset(
+          (adjustedTopLeft.dx + adjustedBottomRight.dx) / 2,
+          (adjustedTopLeft.dy + adjustedBottomRight.dy) / 2,
+        );
+
+        activeLayer.item.offsets[1] = Offset(
+          adjustedBottomRight.dx - adjustedTopLeft.dx,
+          adjustedBottomRight.dy - adjustedTopLeft.dy,
+        );
+
+        final activeLayerMap = activeLayer.toMap();
+        activeLayerMap['rawSize'] = {
+          'w': adjustedBottomRight.dx - adjustedTopLeft.dx,
+          'h': adjustedBottomRight.dy - adjustedTopLeft.dy,
+        };
+
+        // debugPrint('rawsize: ${activeLayerMap['rawSize']}');
+        return Layer.fromMap(activeLayerMap, []);
+      }
+    }
+
+    // debugPrint(
+    //     'item size before ${(activeLayer as PaintingLayerData).item.offsets[1]!}');
+
+    // activeLayer = (Layer.fromMap(activeLayer.toMap(), []) as PaintingLayerData)
+    //   ..item.offsets[1] = Offset(
+    //     (activeLayer as PaintingLayerData).item.offsets[1]!.dx +
+    //         detail.focalPointDelta.dx,
+    //     activeLayer.item.offsets[1]!.dy + detail.focalPointDelta.dy,
+    //   );
+
+    // debugPrint('item size, ${activeLayer.item.offsets[1]}');
+
+    activeLayer.offset = Offset(
+      activeLayer.offset.dx + detail.focalPointDelta.dx,
+      activeLayer.offset.dy + detail.focalPointDelta.dy,
+    );
+    return activeLayer;
   }
 
   /// Calculates movement of a layer based on user interactions, considering various conditions such as hit areas and screen boundaries.

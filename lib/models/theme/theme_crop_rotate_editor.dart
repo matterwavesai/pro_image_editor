@@ -103,6 +103,6 @@ class CropRotateEditorTheme {
     this.aspectRatioSheetBackgroundColor = const Color(0xFF303030),
     this.aspectRatioSheetForegroundColor = const Color(0xFFFAFAFA),
     this.cropCornerLength = 36,
-    this.cropCornerThickness = 6,
+    this.cropCornerThickness = 3,
   });
 }

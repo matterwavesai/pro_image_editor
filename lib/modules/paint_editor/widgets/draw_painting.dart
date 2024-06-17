@@ -105,19 +105,13 @@ class DrawPainting extends CustomPainter {
       case PaintModeE.rect:
         final rect =
             Rect.fromPoints(item.offsets[0]! * scale, item.offsets[1]! * scale);
-        if (item.fill) {
-          item.hit = rect.contains(position);
-        } else {
-          final left = strokeW;
-          final top = strokeW;
-          final right = rect.right - strokeHalfW;
-          final bottom = rect.bottom - strokeHalfW;
+        item.hit = rect.contains(position);
 
-          item.hit = position.dx < left ||
-              position.dx > right ||
-              position.dy < top ||
-              position.dy > bottom;
-        }
+        break;
+      case PaintModeE.cropRect:
+        final rect =
+            Rect.fromPoints(item.offsets[0]! * scale, item.offsets[1]! * scale);
+        item.hit = rect.contains(position);
         break;
       case PaintModeE.circle:
         final path = Path();

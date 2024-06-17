@@ -2,7 +2,7 @@
 import 'dart:ui';
 
 // Flutter imports:
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 // Project imports:
 import '../../../models/paint_editor/painted_model.dart';
@@ -60,6 +60,132 @@ class PaintElement {
         break;
       case PaintModeE.rect:
         canvas.drawRect(Rect.fromPoints(start! * scale, end! * scale), painter);
+        break;
+      case PaintModeE.cropRect:
+        Path path = Path();
+        const cornerThickness = 3.0;
+        const cornerLength = 6.0;
+        final rotationScaleFactor = scale;
+
+        double width = cornerThickness / rotationScaleFactor;
+        double length = cornerLength / rotationScaleFactor;
+
+        final double cropOffsetLeft = start!.dx;
+        final double cropOffsetTop = start.dy;
+        final double cropOffsetRight = end!.dx;
+        final double cropOffsetBottom = end.dy;
+        final Rect cropRect = Rect.fromPoints(start, end);
+
+        /// Top-Left
+        path.addRect(Rect.fromLTWH(cropOffsetLeft - cornerThickness + 1,
+            cropOffsetTop - cornerThickness, length, width));
+        path.addRect(Rect.fromLTWH(cropOffsetLeft - cornerThickness,
+            cropOffsetTop - cornerThickness, width, length));
+
+        /// Top line
+        path.addRect(Rect.fromLTWH(
+            cropOffsetLeft - 1, cropOffsetTop - 1, cropRect.width, 1));
+
+        // Top center brick, width equal to the cornerLength, thickness equal to the cornerThickness
+        path.addRect(
+          Rect.fromLTWH(
+            cropOffsetLeft + cropRect.width / 2 - length / 2,
+            cropOffsetTop - cornerThickness,
+            cornerLength,
+            cornerThickness,
+          ),
+        );
+
+        /// Top-Right
+        path.addRect(Rect.fromLTWH(cropOffsetRight - length + cornerThickness,
+            cropOffsetTop - 3, length, width));
+        path.addRect(Rect.fromLTWH(cropOffsetRight - width + cornerThickness,
+            cropOffsetTop - 3, width, length));
+
+        /// Right line
+        path.addRect(Rect.fromLTWH(
+            cropOffsetRight, cropOffsetTop - 1, 1, cropRect.height));
+
+        /// Right center brick
+        path.addRect(
+          Rect.fromLTWH(
+            cropOffsetRight,
+            cropOffsetTop + cropRect.height / 2 - length / 2,
+            cornerThickness,
+            cornerLength,
+          ),
+        );
+
+        /// Bottom-Left
+        path.addRect(Rect.fromLTWH(cropOffsetLeft - cornerThickness,
+            cropOffsetBottom - width + cornerThickness, length, width));
+        path.addRect(Rect.fromLTWH(cropOffsetLeft - cornerThickness,
+            cropOffsetBottom - length + cornerThickness, width, length));
+
+        /// Bottom line
+        path.addRect(Rect.fromLTWH(
+            cropOffsetLeft - 1, cropOffsetBottom, cropRect.width, 1));
+
+        /// Bottom center brick
+        path.addRect(
+          Rect.fromLTWH(
+            cropOffsetLeft + cropRect.width / 2 - length / 2,
+            cropOffsetBottom,
+            cornerLength,
+            cornerThickness,
+          ),
+        );
+
+        /// Bottom-Right
+        path.addRect(Rect.fromLTWH(cropOffsetRight - length + cornerThickness,
+            cropOffsetBottom - width + cornerThickness, length, width));
+        path.addRect(Rect.fromLTWH(cropOffsetRight - width + cornerThickness,
+            cropOffsetBottom - length + cornerThickness, width, length));
+
+        /// Left line
+        path.addRect(Rect.fromLTWH(
+            cropOffsetLeft - 1, cropOffsetTop - 1, 1, cropRect.height));
+
+        /// Left center brick
+        path.addRect(
+          Rect.fromLTWH(
+            cropOffsetLeft - cornerThickness,
+            cropOffsetTop + cropRect.height / 2 - length / 2,
+            cornerThickness,
+            cornerLength,
+          ),
+        );
+
+        canvas.drawPath(
+          path,
+          Paint()
+            ..color = Colors.black
+            ..style = PaintingStyle.fill,
+        );
+
+        /// Draw the text in the center of the crop rectangle.
+
+        if (item.text != null) {
+          final textPainter = TextPainter(
+            text: TextSpan(
+              text: item.text!,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 12,
+              ),
+            ),
+            textDirection: TextDirection.ltr,
+          );
+
+          textPainter.layout();
+          textPainter.paint(
+            canvas,
+            Offset(
+              cropOffsetLeft + cropRect.width / 2 - textPainter.width / 2,
+              cropOffsetTop + cropRect.height / 2 - textPainter.height / 2,
+            ),
+          );
+        }
         break;
       case PaintModeE.circle:
         final path = Path();

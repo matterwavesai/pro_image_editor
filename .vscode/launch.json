@@ -7,7 +7,12 @@
         {
             "name": "pro_image_editor",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "-d",
+                "iPhone",
+                // "Peedi"
+            ]
         },
         {
             "name": "pro_image_editor (profile mode)",
