@@ -1,6 +1,8 @@
 // Flutter imports:
 import 'package:flutter/widgets.dart';
 
+import 'layer/layer.dart';
+
 export 'whatsapp/whatsapp_custom_text_styles.dart';
 
 /// The `ImageEditorCustomWidgets` class encapsulates custom widget components that can be
@@ -55,6 +57,9 @@ export 'whatsapp/whatsapp_custom_text_styles.dart';
 ///
 /// Please refer to the documentation of individual properties and methods for more details.
 class ImageEditorCustomWidgets {
+  final Widget Function(void Function(Layer newLayer) addLayer,
+      void Function(int index) removeLayer)? buildBottomSheet;
+
   /// A custom widget for removing a layer or element from the editor interface.
   final Widget? removeLayer;
 
@@ -189,6 +194,7 @@ class ImageEditorCustomWidgets {
     this.paintEditorBodyItem,
     this.closeWarningDialog,
     this.whatsAppOwnAppBarIcons,
+    this.buildBottomSheet,
   });
 }
 

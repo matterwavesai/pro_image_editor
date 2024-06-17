@@ -478,6 +478,16 @@ class ZoomableMainEditorState extends State<ZoomableMainEditor>
     super.dispose();
   }
 
+  void _addLayer(Layer layer) {
+    _layers.add(layer);
+    setState(() {});
+  }
+
+  void _removeLayer(int index) {
+    _layers.removeAt(index);
+    setState(() {});
+  }
+
   void _setRawLayers({bool refit = false}) {
     if (refit) calcFitToScreen(animated: false);
     _rawLayers = LayerTransformGenerator(
@@ -1907,7 +1917,12 @@ class ZoomableMainEditorState extends State<ZoomableMainEditor>
   }
 
   Widget? _buildBottomAppBar() {
-    return customWidgets.bottomBarCropRotateEditor;
+    return customWidgets.buildBottomSheet != null
+        ? customWidgets.buildBottomSheet!(
+            _addLayer,
+            _removeLayer,
+          )
+        : const SizedBox.shrink();
   }
 
   Widget _buildBody() {
