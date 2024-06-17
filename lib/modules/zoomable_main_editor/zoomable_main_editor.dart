@@ -57,6 +57,7 @@ class ZoomableMainEditor extends StatefulWidget
   final CropRotateEditorInitConfigs initConfigs;
   @override
   final EditorImage editorImage;
+  final void Function(List<Rect> cropRects) onDone;
 
   /// Constructs a `CropRotateEditor` widget.
   ///
@@ -67,6 +68,7 @@ class ZoomableMainEditor extends StatefulWidget
     super.key,
     required this.editorImage,
     required this.initConfigs,
+    required this.onDone,
   });
 
   /// Constructs a `CropRotateEditor` widget with image data loaded from memory.
@@ -74,11 +76,13 @@ class ZoomableMainEditor extends StatefulWidget
     Uint8List byteArray, {
     Key? key,
     required CropRotateEditorInitConfigs initConfigs,
+    required void Function(List<Rect> cropRects) onDone,
   }) {
     return ZoomableMainEditor._(
       key: key,
       editorImage: EditorImage(byteArray: byteArray),
       initConfigs: initConfigs,
+      onDone: onDone,
     );
   }
 
@@ -87,11 +91,13 @@ class ZoomableMainEditor extends StatefulWidget
     File file, {
     Key? key,
     required CropRotateEditorInitConfigs initConfigs,
+    required void Function(List<Rect> cropRects) onDone,
   }) {
     return ZoomableMainEditor._(
       key: key,
       editorImage: EditorImage(file: file),
       initConfigs: initConfigs,
+      onDone: onDone,
     );
   }
 
@@ -100,11 +106,13 @@ class ZoomableMainEditor extends StatefulWidget
     String assetPath, {
     Key? key,
     required CropRotateEditorInitConfigs initConfigs,
+    required void Function(List<Rect> cropRects) onDone,
   }) {
     return ZoomableMainEditor._(
       key: key,
       editorImage: EditorImage(assetPath: assetPath),
       initConfigs: initConfigs,
+      onDone: onDone,
     );
   }
 
@@ -113,11 +121,13 @@ class ZoomableMainEditor extends StatefulWidget
     String networkUrl, {
     Key? key,
     required CropRotateEditorInitConfigs initConfigs,
+    required void Function(List<Rect> cropRects) onDone,
   }) {
     return ZoomableMainEditor._(
       key: key,
       editorImage: EditorImage(networkUrl: networkUrl),
       initConfigs: initConfigs,
+      onDone: onDone,
     );
   }
 
@@ -127,6 +137,7 @@ class ZoomableMainEditor extends StatefulWidget
   factory ZoomableMainEditor.autoSource({
     Key? key,
     required CropRotateEditorInitConfigs initConfigs,
+    required void Function(List<Rect> cropRects) onDone,
     Uint8List? byteArray,
     File? file,
     String? assetPath,
@@ -137,24 +148,28 @@ class ZoomableMainEditor extends StatefulWidget
         byteArray,
         key: key,
         initConfigs: initConfigs,
+        onDone: onDone,
       );
     } else if (file != null) {
       return ZoomableMainEditor.file(
         file,
         key: key,
         initConfigs: initConfigs,
+        onDone: onDone,
       );
     } else if (networkUrl != null) {
       return ZoomableMainEditor.network(
         networkUrl,
         key: key,
         initConfigs: initConfigs,
+        onDone: onDone,
       );
     } else if (assetPath != null) {
       return ZoomableMainEditor.asset(
         assetPath,
         key: key,
         initConfigs: initConfigs,
+        onDone: onDone,
       );
     } else {
       throw ArgumentError(
@@ -688,7 +703,8 @@ class ZoomableMainEditorState extends State<ZoomableMainEditor>
         layerRects.add(rect);
       }
     }
-    if (mounted) Navigator.pop(context, layerRects);
+    widget.onDone(layerRects);
+    // if (mounted) Navigator.pop(context, layerRects);
     cropRotateEditorCallbacks?.handleDone();
   }
 

@@ -237,6 +237,7 @@ class _StandaloneExampleState extends State<StandaloneExample>
     return ZoomableMainEditor.asset(
       ExampleConstants.of(context)!.demoAssetPath,
       key: _zoomableMainEditorKey,
+      onDone: (rects) {},
       initConfigs: CropRotateEditorInitConfigs(
         layers: [
           Layer.fromMap({
