@@ -1875,7 +1875,6 @@ class ZoomableMainEditorState extends State<ZoomableMainEditor>
               backgroundColor: imageEditorTheme.cropRotateEditor.background,
               appBar: _buildAppBar(constraints),
               body: _buildBody(),
-              bottomNavigationBar: _buildBottomAppBar(),
             ),
           ),
         );
@@ -1980,6 +1979,7 @@ class ZoomableMainEditorState extends State<ZoomableMainEditor>
                 ),
               ),
             ),
+            _buildBottomAppBar() ?? const SizedBox.shrink(),
           ],
         ),
       ),
