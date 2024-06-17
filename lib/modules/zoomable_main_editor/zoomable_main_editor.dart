@@ -1911,41 +1911,41 @@ class ZoomableMainEditorState extends State<ZoomableMainEditor>
   }
 
   Widget _buildBody() {
-    return SafeArea(
-      child: ScreenResizeDetector(
-        onResizeUpdate: (event) {
-          if (editorBodySize != event.newContentSize) {
-            editorBodySize = event.newContentSize;
-            cropPainterKey.currentState?.setForegroundPainter(cropPainter);
-          }
-          cropEditorScreenRatio = Size(
-            editorBodySize.width - _screenPadding * 2,
-            editorBodySize.height - _screenPadding * 2,
-          ).aspectRatio;
-        },
-        onResizeEnd: (event) {
-          if (_imageNeedDecode) _decodeImage();
-          _setCropRectBoundings();
-          _updateAllStates();
-        },
-        child: Stack(
-          children: [
-            if (_showFakeHero)
-              _buildFakeHero()
-            else if (!_imageSizeIsDecoded && initConfigs.convertToUint8List)
-              Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: FittedBox(
-                    child: PlatformCircularProgressIndicator(
-                      designMode: designMode,
-                    ),
+    return ScreenResizeDetector(
+      onResizeUpdate: (event) {
+        if (editorBodySize != event.newContentSize) {
+          editorBodySize = event.newContentSize;
+          cropPainterKey.currentState?.setForegroundPainter(cropPainter);
+        }
+        cropEditorScreenRatio = Size(
+          editorBodySize.width - _screenPadding * 2,
+          editorBodySize.height - _screenPadding * 2,
+        ).aspectRatio;
+      },
+      onResizeEnd: (event) {
+        if (_imageNeedDecode) _decodeImage();
+        _setCropRectBoundings();
+        _updateAllStates();
+      },
+      child: Stack(
+        children: [
+          if (_showFakeHero)
+            _buildFakeHero()
+          else if (!_imageSizeIsDecoded && initConfigs.convertToUint8List)
+            Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: 60,
+                height: 60,
+                child: FittedBox(
+                  child: PlatformCircularProgressIndicator(
+                    designMode: designMode,
                   ),
                 ),
               ),
-            AnimatedOpacity(
+            ),
+          SafeArea(
+            child: AnimatedOpacity(
               duration: !initConfigs.convertToUint8List
                   ? Duration.zero
                   : const Duration(milliseconds: 160),
@@ -1979,9 +1979,9 @@ class ZoomableMainEditorState extends State<ZoomableMainEditor>
                 ),
               ),
             ),
-            _buildBottomAppBar() ?? const SizedBox.shrink(),
-          ],
-        ),
+          ),
+          _buildBottomAppBar() ?? const SizedBox.shrink(),
+        ],
       ),
     );
   }
