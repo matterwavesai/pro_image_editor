@@ -1875,7 +1875,7 @@ class ZoomableMainEditorState extends State<ZoomableMainEditor>
               backgroundColor: imageEditorTheme.cropRotateEditor.background,
               appBar: _buildAppBar(constraints),
               body: _buildBody(),
-              // bottomNavigationBar: _buildBottomAppBar(),
+              bottomNavigationBar: _buildBottomAppBar(),
             ),
           ),
         );
@@ -1901,147 +1901,15 @@ class ZoomableMainEditorState extends State<ZoomableMainEditor>
                     onPressed: close,
                   ),
                   const Spacer(),
-                  IconButton(
-                    tooltip: i18n.cropRotateEditor.undo,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    icon: Icon(
-                      icons.undoAction,
-                      color:
-                          canUndo ? Colors.white : Colors.white.withAlpha(80),
-                    ),
-                    onPressed: undoAction,
-                  ),
-                  IconButton(
-                    tooltip: i18n.cropRotateEditor.redo,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    icon: Icon(
-                      icons.redoAction,
-                      color:
-                          canRedo ? Colors.white : Colors.white.withAlpha(80),
-                    ),
-                    onPressed: redoAction,
-                  ),
                   _buildDoneBtn(),
                 ],
               )
             : null);
   }
 
-  // Widget? _buildBottomAppBar() {
-  //   return customWidgets.bottomBarCropRotateEditor ??
-  //       (!isWhatsAppDesign
-  //           ? (cropRotateEditorConfigs.canRotate ||
-  //                   cropRotateEditorConfigs.canFlip ||
-  //                   cropRotateEditorConfigs.canChangeAspectRatio ||
-  //                   cropRotateEditorConfigs.canReset
-  //               ? Theme(
-  //                   data: theme,
-  //                   child: Scrollbar(
-  //                     controller: _bottomBarScrollCtrl,
-  //                     scrollbarOrientation: ScrollbarOrientation.top,
-  //                     thickness: isDesktop ? null : 0,
-  //                     child: BottomAppBar(
-  //                       height: kToolbarHeight,
-  //                       color: imageEditorTheme
-  //                           .cropRotateEditor.bottomBarBackgroundColor,
-  //                       padding: EdgeInsets.zero,
-  //                       child: Center(
-  //                         child: SingleChildScrollView(
-  //                           controller: _bottomBarScrollCtrl,
-  //                           scrollDirection: Axis.horizontal,
-  //                           child: ConstrainedBox(
-  //                             constraints: BoxConstraints(
-  //                               minWidth:
-  //                                   min(MediaQuery.of(context).size.width, 500),
-  //                               maxWidth: 500,
-  //                             ),
-  //                             child: Builder(builder: (context) {
-  //                               Color foregroundColor = imageEditorTheme
-  //                                   .cropRotateEditor.appBarForegroundColor;
-  //                               return Wrap(
-  //                                 direction: Axis.horizontal,
-  //                                 alignment: WrapAlignment.spaceAround,
-  //                                 children: <Widget>[
-  //                                   if (cropRotateEditorConfigs.canRotate)
-  //                                     FlatIconTextButton(
-  //                                       key: const ValueKey(
-  //                                           'crop-rotate-editor-rotate-btn'),
-  //                                       label: Text(
-  //                                         i18n.cropRotateEditor.rotate,
-  //                                         style: TextStyle(
-  //                                             fontSize: 10.0,
-  //                                             color: foregroundColor),
-  //                                       ),
-  //                                       icon: Icon(
-  //                                           icons.cropRotateEditor.rotate,
-  //                                           color: foregroundColor),
-  //                                       onPressed: rotate,
-  //                                     ),
-  //                                   if (cropRotateEditorConfigs.canFlip)
-  //                                     FlatIconTextButton(
-  //                                       key: const ValueKey(
-  //                                           'crop-rotate-editor-flip-btn'),
-  //                                       label: Text(
-  //                                         i18n.cropRotateEditor.flip,
-  //                                         style: TextStyle(
-  //                                             fontSize: 10.0,
-  //                                             color: foregroundColor),
-  //                                       ),
-  //                                       icon: Icon(icons.cropRotateEditor.flip,
-  //                                           color: foregroundColor),
-  //                                       onPressed: flip,
-  //                                     ),
-  //                                   if (cropRotateEditorConfigs
-  //                                       .canChangeAspectRatio)
-  //                                     FlatIconTextButton(
-  //                                       key: const ValueKey(
-  //                                           'crop-rotate-editor-ratio-btn'),
-  //                                       label: Text(
-  //                                         i18n.cropRotateEditor.ratio,
-  //                                         style: TextStyle(
-  //                                             fontSize: 10.0,
-  //                                             color: foregroundColor),
-  //                                       ),
-  //                                       icon: Icon(
-  //                                           icons.cropRotateEditor.aspectRatio,
-  //                                           color: foregroundColor),
-  //                                       onPressed: openAspectRatioOptions,
-  //                                     ),
-  //                                   if (cropRotateEditorConfigs.canReset)
-  //                                     FlatIconTextButton(
-  //                                       key: const ValueKey(
-  //                                           'crop-rotate-editor-reset-btn'),
-  //                                       label: Text(
-  //                                         i18n.cropRotateEditor.reset,
-  //                                         style: TextStyle(
-  //                                             fontSize: 10.0,
-  //                                             color: foregroundColor),
-  //                                       ),
-  //                                       icon: Icon(icons.cropRotateEditor.reset,
-  //                                           color: foregroundColor),
-  //                                       onPressed: reset,
-  //                                     ),
-  //                                 ],
-  //                               );
-  //                             }),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 )
-  //               : null)
-  //           : isWhatsAppDesign
-  //               ? WhatsAppCropRotateToolbar(
-  //                   configs: configs,
-  //                   onCancel: close,
-  //                   onRotate: rotate,
-  //                   onDone: done,
-  //                   onReset: reset,
-  //                   openAspectRatios: openAspectRatioOptions,
-  //                 )
-  //               : null);
-  // }
+  Widget? _buildBottomAppBar() {
+    return customWidgets.bottomBarCropRotateEditor;
+  }
 
   Widget _buildBody() {
     return SafeArea(
