@@ -365,6 +365,7 @@ class ZoomableMainEditorState extends State<ZoomableMainEditor>
             cornerLength: imageEditorTheme.cropRotateEditor.cropCornerLength,
             imageEditorTheme: imageEditorTheme,
             drawCircle: cropRotateEditorConfigs.roundCropper,
+            cropRects: _layers,
           )
         : null;
   }
@@ -1210,6 +1211,7 @@ class ZoomableMainEditorState extends State<ZoomableMainEditor>
 
       // Update translation and zoom values
       translate = _startingTranslate - _startingCenterOffset + centerZoomOffset;
+      debugPrint('translate: $translate');
       userScaleFactor = newZoom;
 
       // Set offset limits and trigger widget rebuild
@@ -1455,6 +1457,7 @@ class ZoomableMainEditorState extends State<ZoomableMainEditor>
               Offset(details.focalPointDelta.dx, details.focalPointDelta.dy) /
                   scaleFactor *
                   (cropRotateEditorConfigs.reverseDragDirection ? -1 : 1);
+          debugPrint('translate: $translate');
           _setOffsetLimits();
           cropRotateEditorCallbacks?.handleMove();
 

@@ -264,29 +264,29 @@ class _StandaloneExampleState extends State<StandaloneExample>
               // 'fill': true,
             }
           }, []),
-          Layer.fromMap({
-            'x': 0.0,
-            'y': 300.0,
-            'rawSize': {
-              'w': 100.0,
-              'h': 100.0,
-            },
-            'rotation': 0.0,
-            'scale': 1.0,
-            'flipX': false,
-            'flipY': false,
-            'type': 'painting',
-            'item': {
-              'mode': 'cropRect',
-              'offsets': [
-                {'x': 0.0, 'y': 0.0},
-                {'x': 100.0, 'y': 100.0}
-              ],
-              'color': Colors.red.value,
-              'strokeWidth': 5.0,
-              // 'fill': true,
-            }
-          }, []),
+          // Layer.fromMap({
+          //   'x': 0.0,
+          //   'y': 300.0,
+          //   'rawSize': {
+          //     'w': 100.0,
+          //     'h': 100.0,
+          //   },
+          //   'rotation': 0.0,
+          //   'scale': 1.0,
+          //   'flipX': false,
+          //   'flipY': false,
+          //   'type': 'painting',
+          //   'item': {
+          //     'mode': 'cropRect',
+          //     'offsets': [
+          //       {'x': 0.0, 'y': 0.0},
+          //       {'x': 100.0, 'y': 100.0}
+          //     ],
+          //     'color': Colors.red.value,
+          //     'strokeWidth': 5.0,
+          //     // 'fill': true,
+          //   }
+          // }, []),
         ],
         theme: ThemeData.dark(),
         convertToUint8List: true,

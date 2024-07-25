@@ -10,8 +10,8 @@
             "type": "dart",
             "args": [
                 "-d",
-                "iPhone",
-                // "Peedi"
+                // "iPhone",
+                "Peedi"
             ]
         },
         {

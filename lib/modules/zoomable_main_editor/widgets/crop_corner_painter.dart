@@ -3,6 +3,7 @@ import 'dart:math';
 
 // Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:pro_image_editor/models/layer/layer.dart';
 
 // Project imports:
 import '../../../models/theme/theme.dart';
@@ -16,6 +17,7 @@ class CropCornerPainter extends CustomPainter {
   final Offset offset;
   final double fadeInOpacity;
   final double interactionOpacity;
+  final List<Layer> cropRects;
 
   final double cornerLength;
   final double cornerThickness;
@@ -43,12 +45,13 @@ class CropCornerPainter extends CustomPainter {
     required this.cornerLength,
     required this.cornerThickness,
     required this.rotationScaleFactor,
+    required this.cropRects,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     if (size.isInfinite) return;
-    // _drawDarkenOutside(canvas: canvas, size: size);
+    _drawDarkenOutside(canvas: canvas, size: size);
     // if (fadeInOpacity > 0) _drawHelperAreas(canvas: canvas, size: size);
     // _drawCorners(canvas: canvas, size: size);
   }
@@ -74,39 +77,29 @@ class CropCornerPainter extends CustomPainter {
       width: size.width * scaleFactor,
       height: size.height * scaleFactor,
     ));
-    if (drawCircle) {
-      /// Create a path for the current rectangle
-      Path circlePath = Path()
-        ..addOval(
-          Rect.fromCenter(
-            center: Offset(
-              cropWidth / 2 + _cropOffsetLeft,
-              cropHeight / 2 + _cropOffsetTop,
-            ),
-            width: cropWidth,
-            height: cropHeight,
-          ),
-        );
 
-      /// Subtract the area of the current rectangle from the path for the entire canvas
-      path = Path.combine(PathOperation.difference, path, circlePath);
-    } else {
-      /// Create a path for the current rectangle
-      Path rectPath = Path()
-        ..addRect(
-          Rect.fromCenter(
-            center: Offset(
-              cropWidth / 2 + _cropOffsetLeft,
-              cropHeight / 2 + _cropOffsetTop,
-            ),
-            width: cropWidth,
-            height: cropHeight,
-          ),
-        );
+    /// Create a path for the cropRect layers
+    Path rectPath = Path();
 
-      /// Subtract the area of the current rectangle from the path for the entire canvas
-      path = Path.combine(PathOperation.difference, path, rectPath);
+    for (final (layer as PaintingLayerData) in cropRects) {
+      rectPath.addRect(
+        Rect.fromCenter(
+          center: Offset(
+            size.width / 2 +
+                layer.offset.dx * scaleFactor +
+                offset.dx * scaleFactor,
+            size.height / 2 +
+                layer.offset.dy * scaleFactor +
+                offset.dy * scaleFactor,
+          ),
+          width: layer.size.width * scaleFactor,
+          height: layer.size.height * scaleFactor,
+        ),
+      );
     }
+
+    /// Subtract the area of the current rectangle from the path for the entire canvas
+    path = Path.combine(PathOperation.difference, path, rectPath);
 
     Color interpolatedColor = Color.lerp(
       imageEditorTheme.cropRotateEditor.background,
@@ -314,6 +307,7 @@ class CropCornerPainter extends CustomPainter {
       cornerLength: cornerLength,
       cornerThickness: cornerThickness,
       rotationScaleFactor: rotationScaleFactor,
+      cropRects: cropRects,
     );
   }
 }

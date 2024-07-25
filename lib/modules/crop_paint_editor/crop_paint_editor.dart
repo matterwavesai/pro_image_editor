@@ -259,7 +259,7 @@ class CropPaintEditorState extends State<CropPaintEditor>
   double _interactionOpacityProgress = 0;
 
   /// The padding around the screen.
-  final double _screenPadding = 20;
+  final double _screenPadding = 25;
 
   /// The starting scale value for pinch gestures.
   double _startingPinchScale = 1;
