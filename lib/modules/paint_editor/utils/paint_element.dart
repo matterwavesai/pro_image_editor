@@ -170,7 +170,7 @@ class PaintElement {
             text: TextSpan(
               text: item.text!,
               style: const TextStyle(
-                color: Colors.black,
+                color: Colors.red,
                 fontSize: 12,
               ),
             ),
