@@ -159,7 +159,7 @@ class PaintElement {
         canvas.drawPath(
           path,
           Paint()
-            ..color = Colors.black
+            ..color = Colors.blue
             ..style = PaintingStyle.fill,
         );
 
@@ -170,7 +170,7 @@ class PaintElement {
             text: TextSpan(
               text: item.text!,
               style: const TextStyle(
-                color: Colors.red,
+                color: Colors.blue,
                 fontSize: 12,
               ),
             ),
